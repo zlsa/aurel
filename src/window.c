@@ -1,4 +1,6 @@
 
+#include <GL/glew.h>
+
 #include "util.h"
 #include "log.h"
 
@@ -50,6 +52,7 @@ bool window_open(struct window_b *window) {
     log_warn("tried to open an open window");
     return(false);
   }
+
   GLFWmonitor* monitor=glfwGetPrimaryMonitor();
   if(!window->fullscreen) {
     monitor=NULL;
@@ -58,12 +61,24 @@ bool window_open(struct window_b *window) {
     window_set_size(window,mode->width,mode->height);
     log_info("fullscreen mode selected; setting window size to %dx%d",mode->width,mode->height);
   }
+
   window->window=glfwCreateWindow(window->width,window->height,window->title,monitor,NULL);
+
   if(!window->window) {
     window->window=NULL;
     log_fatal("could not open GLFW window %dx%d",window->width,window->height);
   }
+
+  glfwMakeContextCurrent(window->window);
+
+  GLenum ret = glewInit();
+
+  if(ret != GLEW_OK) {
+    log_fatal("could not initialize GLEW: %d", glewGetErrorString(ret));
+  }
+
   window->open=true;
+
   return(true);
 }
 

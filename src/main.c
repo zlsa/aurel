@@ -5,6 +5,8 @@
 #include "file.h"
 #include "config.h"
 #include "window.h"
+#include "object.h"
+#include "terrain.h"
 
 #include "main.h"
 
@@ -83,14 +85,18 @@ int main(int argc,char **argv) {
 
   glfwMakeContextCurrent(program->window->window);
 
+  struct terrain_b *terrain = terrain_new();
+  terrain_generate_object(terrain);
+
   /* MAIN LOOP */
   while(!glfwWindowShouldClose(program->window->window)) {
-    int width,height;
-    glfwGetFramebufferSize(program->window->window,&width,&height);
-    glViewport(0,0,width,height);
+    int width, height;
+    glfwGetFramebufferSize(program->window->window, &width, &height);
+    glViewport(0, 0, width, height);
 
-    int ratio=width/(float) height;
-    glViewport(0,0,width,height);
+    int ratio = ((float) width) / ((float) height);
+    glViewport(0, 0, width, height);
+
     glClear(GL_COLOR_BUFFER_BIT);
 
     glMatrixMode(GL_PROJECTION);
@@ -101,22 +107,26 @@ int main(int argc,char **argv) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+    terrain_draw(terrain);
 
-    glBegin(GL_TRIANGLES);
-    glColor3f(1.f, 0.f, 0.f);
-    glVertex3f(-0.6f, -0.4f, 0.f);
-    glColor3f(0.f, 1.f, 0.f);
-    glVertex3f(0.6f, -0.4f, 0.f);
-    glColor3f(0.f, 0.f, 1.f);
-    glVertex3f(0.f, 0.6f, 0.f);
-    glEnd();
+    if(false) {
+      glBegin(GL_TRIANGLES);
+      glColor3f(   1.0f,  0.0f, 0.0f);
+      glVertex3f( -0.6f, -0.4f, 0.0f);
+      glColor3f(   0.0f,  1.0f, 0.0f);
+      glVertex3f(  0.6f, -0.4f, 0.0f);
+      glColor3f(   0.0f,  0.0f, 1.0f);
+      glVertex3f(  0.0f,  0.6f, 0.0f);
+      glEnd();
+    }
 
     glfwSwapBuffers(program->window->window);
 
     /* Poll for and process events */
     glfwPollEvents();
   }
+
+  terrain_free(terrain);
 
   return(EXIT_SUCCESS);
 }
