@@ -76,23 +76,28 @@ bool shader_fragment_file(struct shader_b *shader, struct file_b *file) {
 bool shader_compile_vertex(struct shader_b *shader) {
   if(shader->vertex_source) {
     glShaderSource(shader->vertex, 1, (const GLchar**)&shader->vertex_source, &shader->vertex_source_length);
+
+    glCompileShader(shader->vertex);
+
     GLint compile_status;
     glGetShaderiv(shader->vertex, GL_COMPILE_STATUS, &compile_status);
 
-    if(compile_status != GL_TRUE) {
+    if(compile_status == GL_FALSE) {
       GLint log_length = -1;
       glGetShaderiv(shader->vertex, GL_INFO_LOG_LENGTH, &log_length);
 
       print_gl_error(false);
 
+      log_warn("could not compile vertex shader");
       if(log_length > 0) {
         char *log = MALLOC(sizeof(char) * log_length);
-        glGetShaderInfoLog(shader->vertex, log_length, NULL, log);
+        glGetShaderInfoLog(shader->vertex, log_length-1, NULL, log);
 
-        log_warn("could not compile vertex shader: %s", log);
-      } else {
-        log_warn("could not compile vertex shader");
+        log_warn("--[    VERTEX WARNING    ]------------------");
+        printf("%s", log);
+        log_warn("--[  END VERTEX WARNING  ]------------------");
       }
+
       log_warn("--[    VERTEX SHADER SOURCE    ]------------");
       printf("%s", shader->vertex_source);
       log_warn("--[  END VERTEX SHADER SOURCE  ]------------");
@@ -102,17 +107,18 @@ bool shader_compile_vertex(struct shader_b *shader) {
 
       return(false);
     }
-
-    printf("YAY! %s\n", shader->vertex_source);
-      
     return(true);
   }
+
   return(true);
 }
 
 bool shader_compile_fragment(struct shader_b *shader) {
   if(shader->fragment_source) {
     glShaderSource(shader->fragment, 1, (const GLchar**)&shader->fragment_source, &shader->fragment_source_length);
+
+    glCompileShader(shader->fragment);
+
     GLint compile_status;
     glGetShaderiv(shader->fragment, GL_COMPILE_STATUS, &compile_status);
 
@@ -122,13 +128,13 @@ bool shader_compile_fragment(struct shader_b *shader) {
 
       print_gl_error(false);
 
+      log_warn("could not compile fragment shader");
       if(log_length > 0) {
         char *log = MALLOC(sizeof(char) * log_length);
-        glGetShaderInfoLog(shader->fragment, log_length, NULL, log);
-
-        log_warn("could not compile fragment shader: %s", log);
-      } else {
-        log_warn("could not compile fragment shader");
+        glGetShaderInfoLog(shader->fragment, log_length-1, NULL, log);
+        log_warn("--[   FRAGMENT WARNING   ]------------------");
+        printf("%s", log);
+        log_warn("--[ END FRAGMENT WARNING ]------------------");
       }
       log_warn("--[   FRAGMENT SHADER SOURCE   ]------------");
       printf("%s", shader->fragment_source);
@@ -139,14 +145,21 @@ bool shader_compile_fragment(struct shader_b *shader) {
 
       return(false);
     }
-
-    printf("YAY! %s\n", shader->fragment_source);
-      
     return(true);
   }
+
   return(true);
 }
 
 bool shader_compile(struct shader_b *shader) {
-  return(shader_compile_vertex(shader));
+  bool success = true;
+  success &= shader_compile_vertex(shader);
+  if(shader->vertex) {
+    glAttachShader(shader->program, shader->vertex);
+  }
+  success &= shader_compile_fragment(shader);
+  if(shader->fragment) {
+    glAttachShader(shader->program, shader->fragment);
+  }
+  return(success);
 }
