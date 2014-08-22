@@ -96,6 +96,7 @@ bool shader_compile_vertex(struct shader_b *shader) {
         log_warn("--[    VERTEX WARNING    ]------------------");
         printf("%s", log);
         log_warn("--[  END VERTEX WARNING  ]------------------");
+        FREE(log);
       }
 
       log_warn("--[    VERTEX SHADER SOURCE    ]------------");
@@ -135,6 +136,7 @@ bool shader_compile_fragment(struct shader_b *shader) {
         log_warn("--[   FRAGMENT WARNING   ]------------------");
         printf("%s", log);
         log_warn("--[ END FRAGMENT WARNING ]------------------");
+        FREE(log);
       }
       log_warn("--[   FRAGMENT SHADER SOURCE   ]------------");
       printf("%s", shader->fragment_source);
