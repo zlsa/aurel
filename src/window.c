@@ -77,6 +77,10 @@ bool window_open(struct window_b *window) {
     log_fatal("could not initialize GLEW: %d", glewGetErrorString(ret));
   }
 
+  if(!GLEW_VERSION_4_0) {
+    log_fatal("OpenGL version older than 3.3");
+  }
+
   window->open=true;
 
   return(true);

@@ -36,3 +36,47 @@ void EXIT(int code) {
   if(program) program->exit_code=code;
   exit(code);
 }
+
+void print_gl_error(bool exit) {
+  GLenum e;
+  bool fatal = false;
+  int i = 0;
+  while((e = glGetError()) != GL_NO_ERROR) {
+    switch(e) {
+    case GL_INVALID_ENUM:
+      log_warn("GL_INVALID_ENUM");
+      break;
+    case GL_INVALID_VALUE:
+      log_warn("GL_INVALID_VALUE");
+      break;
+    case GL_INVALID_OPERATION:
+      log_warn("GL_INVALID_OPERATION");
+      break;
+    case GL_INVALID_FRAMEBUFFER_OPERATION:
+      log_warn("GL_INVALID_FRAMEBUFFER_OPERATION");
+      break;
+    case GL_OUT_OF_MEMORY:
+      log_warn("GL_OUT_OF_MEMORY");
+      fatal = true;
+      break;
+    case GL_STACK_OVERFLOW:
+      log_warn("GL_STACK_OVERFLOW");
+      fatal = true;
+      break;
+    case GL_STACK_UNDERFLOW:
+      log_warn("GL_STACK_UNDERFLOW");
+      fatal = true;
+      break;
+    default:
+      log_warn("unknown OpenGL error %d", e);
+      break;
+    }
+    i++;
+  }
+  if(fatal && exit) {
+    log_fatal("encountered OpenGL errors, exiting");
+  }
+  if(i > 0) {
+    log_warn("encountered OpenGL errors, ignoring");
+  }
+}

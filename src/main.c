@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <math.h>
 
 extern int memory_blocks;
 extern int memory_blocks_total;
@@ -88,6 +89,8 @@ int main(int argc,char **argv) {
   struct terrain_b *terrain = terrain_new();
   terrain_generate_object(terrain);
 
+  glClearColor(0.0f, 0.2f, 0.3f, 1.0f);
+
   /* MAIN LOOP */
   while(!glfwWindowShouldClose(program->window->window)) {
     int width, height;
@@ -95,6 +98,7 @@ int main(int argc,char **argv) {
     glViewport(0, 0, width, height);
 
     int ratio = ((float) width) / ((float) height);
+
     glViewport(0, 0, width, height);
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -102,7 +106,16 @@ int main(int argc,char **argv) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+    float fov    = DEG_TO_RAD(90);
+    float near   = 1.0;
+    float far    = 100.0;
+
+    float left   = -1 * near * tan((ratio * fov) * 0.5);
+    float right  = far * tan((ratio * fov) * 0.5);
+    float bottom = 1 * near * tan(fov * 0.5);
+    float top    = far * tan(fov * 0.5);
+
+    glOrtho(left, right, bottom, top, near, far);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();

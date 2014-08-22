@@ -7,7 +7,7 @@ LDFLAGS=$(shell pkg-config --libs glfw3) -lGL -lm -lGLEW -lGLU
 
 CC=gcc
 
-OBJS=util.o block.o program.o log.o file.o config.o window.o object.o terrain.o main.o
+OBJS=util.o block.o program.o log.o file.o config.o window.o shader.o object.o terrain.o main.o
 
 down:
 	cd ../ && make src

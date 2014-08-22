@@ -3,8 +3,10 @@
 #define UTIL_H
 
 /* INCLUDES */
+#include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 
 /* DEFINES */
 #define S(n) (n==1?"":"s")
@@ -18,6 +20,9 @@
 // boolean to fail
 #define BTOF(b) (b?"   ":"=> ")
 
+#define RAD_TO_DEG(rad) (rad / M_PI * 180)
+#define DEG_TO_RAD(deg) (deg / 180 * M_PI)
+
 #define RETURN_SUCCESS         (0)
 #define RETURN_FAILURE_EOF     (1)
 #define RETURN_FAILURE_PARSE   (2)
@@ -29,5 +34,7 @@ void *REALLOC(void *ptr,size_t size);
 void *FREE(void *ptr);
 
 void EXIT(int code);
+
+void print_gl_error(bool exit);
 
 #endif
