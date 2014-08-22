@@ -62,6 +62,8 @@ bool window_open(struct window_b *window) {
     log_info("fullscreen mode selected; setting window size to %dx%d",mode->width,mode->height);
   }
 
+  glfwWindowHint(GLFW_SAMPLES, 16);
+
   window->window=glfwCreateWindow(window->width,window->height,window->title,monitor,NULL);
 
   if(!window->window) {

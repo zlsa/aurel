@@ -46,8 +46,14 @@ bool shader_free(struct shader_b *shader) {
     if(shader->vertex_source)   FREE(shader->vertex_source);
     if(shader->fragment_source) FREE(shader->fragment_source);
 
-    if(shader->vertex)   glDeleteShader(shader->vertex);
-    if(shader->fragment) glDeleteShader(shader->fragment);
+    if(shader->vertex) {
+      glDetachShader(shader->program, shader->vertex);
+      glDeleteShader(shader->vertex);
+    }
+    if(shader->fragment) {
+      glDetachShader(shader->program, shader->fragment);
+      glDeleteShader(shader->fragment);
+    }
 
     if(shader->program) glDeleteProgram(shader->program);
     FREE(shader);
@@ -59,7 +65,7 @@ bool shader_vertex_file(struct shader_b *shader, struct file_b *file) {
   char *content = file_read_all(file);
 
   shader->vertex_source        = content;
-  shader->vertex_source_length = strlen(content);
+  shader->vertex_source_length = strlen(content) - 1;
 
   return(true);
 }
@@ -68,7 +74,7 @@ bool shader_fragment_file(struct shader_b *shader, struct file_b *file) {
   char *content = file_read_all(file);
 
   shader->fragment_source        = content;
-  shader->fragment_source_length = strlen(content);
+  shader->fragment_source_length = strlen(content) - 1;
 
   return(true);
 }
@@ -82,7 +88,7 @@ bool shader_compile_vertex(struct shader_b *shader) {
     GLint compile_status;
     glGetShaderiv(shader->vertex, GL_COMPILE_STATUS, &compile_status);
 
-    if(compile_status == GL_FALSE) {
+    if(!compile_status) {
       GLint log_length = -1;
       glGetShaderiv(shader->vertex, GL_INFO_LOG_LENGTH, &log_length);
 
@@ -163,5 +169,32 @@ bool shader_compile(struct shader_b *shader) {
   if(shader->fragment) {
     glAttachShader(shader->program, shader->fragment);
   }
+  glLinkProgram(shader->program);
+  
+  GLint link_status;
+  glGetProgramiv(shader->program, GL_LINK_STATUS, &link_status);
+
+  if(!link_status) {
+    GLint log_length = -1;
+    glGetProgramiv(shader->program, GL_INFO_LOG_LENGTH, &log_length);
+
+    print_gl_error(false);
+
+    log_warn("could not link shader program");
+    if(log_length > 0) {
+      char *log = MALLOC(sizeof(char) * log_length);
+      glGetProgramInfoLog(shader->program, log_length-1, NULL, log);
+      log_warn("--[   PROGRAM WARNING    ]------------------");
+      printf("%s", log);
+      log_warn("--[ END PROGRAM WARNING  ]------------------");
+      FREE(log);
+    }
+
+    glDeleteProgram(shader->program);
+    shader->program = 0;
+
+    return(false);
+  }
+
   return(success);
 }
