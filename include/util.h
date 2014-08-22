@@ -3,8 +3,8 @@
 #define UTIL_H
 
 /* INCLUDES */
-#include <stdbool.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
 #include <math.h>
 
@@ -22,6 +22,8 @@
 
 #define RAD_TO_DEG(rad) (rad / M_PI * 180)
 #define DEG_TO_RAD(deg) (deg / 180 * M_PI)
+
+#define CHUNK_START            (256)
 
 #define RETURN_SUCCESS         (0)
 #define RETURN_FAILURE_EOF     (1)

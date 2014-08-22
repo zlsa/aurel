@@ -62,6 +62,7 @@ bool file_close(struct file_b *file);
 char *file_error(struct file_b *file);
 
 // read/write
+char *file_read_all(struct file_b *file);
 int file_getc(struct file_b *file);
 int file_ungetc(struct file_b *file,char c);
 int file_peek(struct file_b *file);

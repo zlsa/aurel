@@ -1,8 +1,8 @@
 
+#include "util.h"
+
 #include "log.h"
 #include "program.h"
-
-#include "util.h"
 
 extern struct program_b *program;
 

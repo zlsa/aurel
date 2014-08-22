@@ -5,6 +5,7 @@
 #include "file.h"
 #include "config.h"
 #include "window.h"
+#include "shader.h"
 #include "object.h"
 #include "terrain.h"
 

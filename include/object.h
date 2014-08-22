@@ -28,4 +28,6 @@ struct object_b *object_new(void);
 struct object_b *object_reference(struct object_b *object);
 bool object_free(struct object_b *object);
 
+bool object_set_shader(struct object_b *object, struct shader_b *shader);
+
 #endif

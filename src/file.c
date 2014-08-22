@@ -4,7 +4,6 @@
 
 #include "file.h"
 
-#include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
@@ -140,6 +139,31 @@ char *file_error(struct file_b *file) {
 }
 
 /* READING */
+
+char *file_read_all(struct file_b *file) {
+  ASSERT(file);
+  if(!file->open) {
+    log_warn("attempted to read from closed file");
+    return(NULL);
+  }
+  int read  = 0;
+  int chunk = CHUNK_START;
+  int size  = CHUNK_START;
+  int temp;
+  char *buffer = MALLOC(CHUNK_START+1);
+  while(1) {
+    temp = fread(buffer+read, sizeof(char), chunk, file->fp);
+    if(temp == 0)
+      break;
+    read+=temp;
+    if(read >= size-1) {
+      chunk  *= 2;
+      size   += chunk;
+      buffer  = REALLOC(buffer, size);
+    }
+  }
+  return(buffer);
+}
 
 int file_getc(struct file_b *file) {
   ASSERT(file);
