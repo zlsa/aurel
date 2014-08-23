@@ -151,12 +151,14 @@ char *file_read_all(struct file_b *file) {
   int size  = CHUNK_START;
   int temp;
   char *buffer = MALLOC(CHUNK_START+1);
-  while(1) {
+  while(true) {
     temp = fread(buffer+read, sizeof(char), chunk, file->fp);
-    if(temp == 0)
-      break;
     read+=temp;
-    if(read >= size-1) {
+    if(temp == 0) {
+      buffer[read] = '\0';
+      break;
+    }
+    if(read >= size-2) {
       chunk  *= 2;
       size   += chunk;
       buffer  = REALLOC(buffer, size);

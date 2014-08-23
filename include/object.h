@@ -21,6 +21,8 @@ struct object_b {
 
   GLuint vertex_buffer;
   GLuint normal_buffer;
+
+  int vertices;
 };
 
 /* FUNCTIONS */
@@ -29,5 +31,7 @@ struct object_b *object_reference(struct object_b *object);
 bool object_free(struct object_b *object);
 
 bool object_set_shader(struct object_b *object, struct shader_b *shader);
+
+bool object_draw(struct object_b *object);
 
 #endif

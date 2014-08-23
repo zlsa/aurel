@@ -64,6 +64,8 @@ bool window_open(struct window_b *window) {
 
   glfwWindowHint(GLFW_SAMPLES, 16);
 
+  glfwSwapInterval(1);
+
   window->window=glfwCreateWindow(window->width,window->height,window->title,monitor,NULL);
 
   if(!window->window) {

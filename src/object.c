@@ -19,6 +19,8 @@ struct object_b *object_new(void) {
 
   object->shader = NULL;
 
+  object->vertices = 0;
+
   return(object_reference(object));
 }
 
@@ -45,5 +47,21 @@ bool object_set_shader(struct object_b *object, struct shader_b *shader) {
   ASSERT(shader);
   if(object->shader) shader_free(object->shader);
   object->shader = shader_reference(shader);
+  return(true);
+}
+
+bool object_draw(struct object_b *object) {
+  glBindVertexArray(object->vertex_arrays);
+
+  shader_use(object->shader);
+
+  glEnableVertexAttribArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, object->vertex_buffer);
+  glVertexAttribPointer(0, object->vertices, GL_FLOAT, GL_FALSE, 0, (void*) 0);
+
+  glDrawArrays(GL_QUADS, 0, object->vertices);
+
+  glDisableVertexAttribArray(0);
+
   return(true);
 }

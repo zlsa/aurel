@@ -22,6 +22,11 @@ struct shader_b *shader_new(void) {
   shader->vertex_source_length   = 0;
   shader->fragment_source_length = 0;
 
+  shader->uniforms = NULL;
+  shader->uniform_names = NULL;
+  shader->uniform_allocated = 0;
+  shader->uniform_used = 0;
+
   if((shader->program = glCreateProgram()) == 0) {
     print_gl_error(false);
     log_fatal("could not create shader program.");
@@ -53,6 +58,11 @@ bool shader_free(struct shader_b *shader) {
     if(shader->fragment) {
       glDetachShader(shader->program, shader->fragment);
       glDeleteShader(shader->fragment);
+    }
+
+    if(shader->uniform_allocated > 0) {
+      if(shader->uniform_names) FREE(shader->uniform_names);
+      if(shader->uniforms) FREE(shader->uniforms);
     }
 
     if(shader->program) glDeleteProgram(shader->program);
@@ -105,9 +115,11 @@ bool shader_compile_vertex(struct shader_b *shader) {
         FREE(log);
       }
 
+#ifdef DEBUG
       log_warn("--[    VERTEX SHADER SOURCE    ]------------");
       printf("%s", shader->vertex_source);
       log_warn("--[  END VERTEX SHADER SOURCE  ]------------");
+#endif
 
       glDeleteShader(shader->vertex);
       shader->vertex = 0;
@@ -144,9 +156,12 @@ bool shader_compile_fragment(struct shader_b *shader) {
         log_warn("--[ END FRAGMENT WARNING ]------------------");
         FREE(log);
       }
+
+#ifdef DEBUG
       log_warn("--[   FRAGMENT SHADER SOURCE   ]------------");
       printf("%s", shader->fragment_source);
       log_warn("--[ END FRAGMENT SHADER SOURCE ]------------");
+#endif
 
       glDeleteShader(shader->fragment);
       shader->fragment = 0;
@@ -169,6 +184,7 @@ bool shader_compile(struct shader_b *shader) {
   if(shader->fragment) {
     glAttachShader(shader->program, shader->fragment);
   }
+
   glLinkProgram(shader->program);
   
   GLint link_status;
@@ -197,4 +213,66 @@ bool shader_compile(struct shader_b *shader) {
   }
 
   return(success);
+}
+
+// binding
+
+bool shader_use(struct shader_b *shader) {
+  ASSERT(shader);
+  glUseProgram(shader->program);
+  return(true);
+}
+
+//
+
+int shader_uniform_new(struct shader_b *shader, char *name) {
+  ASSERT(shader);
+  if(!shader->uniforms) {
+    shader->uniforms = MALLOC(sizeof(GLint) * SHADER_UNIFORM_CHUNK);
+    shader->uniform_names = MALLOC(sizeof(char *) * SHADER_UNIFORM_CHUNK);
+    shader->uniform_allocated = SHADER_UNIFORM_CHUNK;
+    shader->uniform_used = 0;
+  }
+  if(shader->uniform_used == shader->uniform_allocated) {
+    shader->uniform_allocated *= 2;
+    shader->uniforms = REALLOC(shader->uniforms, sizeof(GLint) * (shader->uniform_allocated));
+    shader->uniform_names = REALLOC(shader->uniform_names, sizeof(char *) * (shader->uniform_allocated));
+  }
+
+  GLint location = glGetUniformLocation(shader->program, name);
+
+  if(location == -1) {
+    print_gl_error(true);
+    log_warn("could not find location of uniform variable '%s'", name);
+    return(-1);
+  } else {
+    shader->uniform_names[shader->uniform_used] = name;
+    shader->uniforms[shader->uniform_used] = location;
+    return(shader->uniform_used++);
+  }
+  
+}
+
+// assumes the shader program is already active
+int shader_uniform_get(struct shader_b *shader, char *name) {
+  ASSERT(shader);
+  int i;
+  if(!shader->uniforms) {
+    return(-1);
+  }
+  for(i=0;i<shader->uniform_used;i++) {
+    if(strcmp(shader->uniform_names[i], name) == 0) return(i);
+  }
+  return(-1);
+}
+
+bool shader_uniform_set_float(struct shader_b *shader, char *name, float value) {
+  ASSERT(shader);
+  int uniform = shader_uniform_get(shader, name);
+  if(uniform == -1) {
+    log_warn("no uniform '%s' found", name);
+    return(false);
+  }
+  glUniform1f(uniform, value);
+  return(true);
 }

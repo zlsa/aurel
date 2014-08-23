@@ -92,6 +92,9 @@ int main(int argc,char **argv) {
 
   glClearColor(0.0f, 0.2f, 0.3f, 1.0f);
 
+  float last_time = glfwGetTime();
+  int frames = 0;
+
   /* MAIN LOOP */
   while(!glfwWindowShouldClose(program->window->window)) {
     int width, height;
@@ -138,6 +141,14 @@ int main(int argc,char **argv) {
 
     /* Poll for and process events */
     glfwPollEvents();
+
+    frames += 1;
+    if(glfwGetTime() - last_time > 2) {
+      int fps = (float) frames / ((glfwGetTime() - last_time) / 2);
+      log_info("FPS: %d", fps);
+      last_time = glfwGetTime();
+      frames = 0;
+    }
   }
 
   terrain_free(terrain);
