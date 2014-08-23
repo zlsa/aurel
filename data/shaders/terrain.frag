@@ -85,7 +85,7 @@ float trange(float il, float i, float ih, float ol, float oh) {
 
 void main() {
 
-  float t = u_Time * 0.2;
+  float t = u_Time * 0.5;
   float factor = 1.0;
   vec2 vp = vec2(v_Position.xy);
   float noise = trange(-1.0, pnoise(vp), 1.0, 0.0, factor);

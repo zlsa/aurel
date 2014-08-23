@@ -52,10 +52,11 @@ bool shader_compile_fragment(struct shader_b *shader);
 bool shader_compile(struct shader_b *shader);
 
 bool shader_use(struct shader_b *shader);
+bool shader_draw(struct shader_b *shader);
 
 // uniforms
 int shader_uniform_new(struct shader_b *shader, char *name);
 int shader_uniform_get(struct shader_b *shader, char *name);
 bool shader_uniform_set_float(struct shader_b *shader, char *name, float value);
-
+bool shader_uniform_set_m4(struct shader_b *shader, char *name, float *value);
 #endif

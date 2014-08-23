@@ -76,7 +76,11 @@ void print_gl_error(bool exit) {
   if(fatal && exit) {
     log_fatal("encountered OpenGL errors, exiting");
   }
-  if(i > 0) {
+  if(i > 1) {
     log_warn("encountered OpenGL errors, ignoring");
   }
+}
+
+void clear_gl_error() {
+  while(glGetError() != GL_NO_ERROR);
 }

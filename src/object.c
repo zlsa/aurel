@@ -10,9 +10,7 @@ struct object_b *object_new(void) {
   struct object_b *object=MALLOC(sizeof(struct object_b));
   object->references    = 0;
 
-  object->vertex_arrays = MALLOC(sizeof(GLint) * OBJECT_ARRAY_NUMBER);
-
-  glGenVertexArrays(OBJECT_ARRAY_NUMBER, object->vertex_arrays);
+  glGenVertexArrays(1, &object->vertex_position_array);
 
   glGenBuffers(1, &object->vertex_buffer);
   glGenBuffers(1, &object->normal_buffer);
@@ -35,8 +33,7 @@ bool object_free(struct object_b *object) {
   object->references--;
   if(object->references == 0) {
     if(object->shader) shader_free(object->shader);
-    glDeleteVertexArrays(OBJECT_ARRAY_NUMBER, object->vertex_arrays);
-    FREE(object->vertex_arrays);
+    glDeleteVertexArrays(1, &object->vertex_position_array);
     FREE(object);
   }
   return(true);
@@ -51,9 +48,9 @@ bool object_set_shader(struct object_b *object, struct shader_b *shader) {
 }
 
 bool object_draw(struct object_b *object) {
-  glBindVertexArray(object->vertex_arrays);
+  glBindVertexArray(object->vertex_position_array);
 
-  shader_use(object->shader);
+  shader_draw(object->shader);
 
   glEnableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, object->vertex_buffer);

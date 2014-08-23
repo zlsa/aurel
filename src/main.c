@@ -1,4 +1,6 @@
 
+#include <GL/glew.h>
+
 #include "util.h"
 #include "log.h"
 #include "program.h"
@@ -88,9 +90,10 @@ int main(int argc,char **argv) {
   glfwMakeContextCurrent(program->window->window);
 
   struct terrain_b *terrain = terrain_new();
+    
   terrain_generate_object(terrain);
 
-  glClearColor(0.0f, 0.2f, 0.3f, 1.0f);
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
   float last_time = glfwGetTime();
   int frames = 0;
@@ -99,43 +102,44 @@ int main(int argc,char **argv) {
   while(!glfwWindowShouldClose(program->window->window)) {
     int width, height;
     glfwGetFramebufferSize(program->window->window, &width, &height);
-    glViewport(0, 0, width, height);
 
-    int ratio = ((float) width) / ((float) height);
-
-    glViewport(0, 0, width, height);
+    float ratio = ((float) width) / ((float) height);
 
     glClear(GL_COLOR_BUFFER_BIT);
+
+    glViewport(0, 0, width, height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    float fov    = DEG_TO_RAD(90);
-    float near   = 1.0;
-    float far    = 100.0;
+    float fov    = DEG_TO_RAD((sin(glfwGetTime() * 3) + 2) * 25) * 0.5;
+    float near   = 0.2;
+    float far    = 10.0;
 
-    float left   = -1 * near * tan((ratio * fov) * 0.5);
-    float right  = far * tan((ratio * fov) * 0.5);
-    float bottom = 1 * near * tan(fov * 0.5);
-    float top    = far * tan(fov * 0.5);
-
-    glOrtho(left, right, bottom, top, near, far);
+    float left   = near * tan(fov) * 0.5 * ratio;
+    float right  = -left;
+    float top    = near * tan(fov) * 0.5;
+    float bottom = -top;
+    
+    glFrustum(left, right, bottom, top, near, far);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    terrain_draw(terrain);
+    glTranslatef(0.0, 0.0, -7.0);
+    glRotatef((float) glfwGetTime() * 100.0, 1.0f, 0.0f, 1.0f);
+    glRotatef((float) glfwGetTime() * 50.0, 1.0f, 1.0f, 0.0f);
 
-    if(false) {
-      glBegin(GL_TRIANGLES);
-      glColor3f(   1.0f,  0.0f, 0.0f);
-      glVertex3f( -0.6f, -0.4f, 0.0f);
-      glColor3f(   0.0f,  1.0f, 0.0f);
-      glVertex3f(  0.6f, -0.4f, 0.0f);
-      glColor3f(   0.0f,  0.0f, 1.0f);
-      glVertex3f(  0.0f,  0.6f, 0.0f);
-      glEnd();
-    }
+    terrain_draw(terrain);
+    
+#if 0
+    glBegin(GL_TRIANGLES);
+    glColor3f(   1.0f,  1.0f, 1.0f);
+    glVertex3f( -0.6f, -0.4f, 0.0f);
+    glVertex3f(  0.6f, -0.4f, 0.0f);
+    glVertex3f(  0.0f,  0.6f, 0.0f);
+    glEnd();
+#endif
 
     glfwSwapBuffers(program->window->window);
 
@@ -149,6 +153,9 @@ int main(int argc,char **argv) {
       last_time = glfwGetTime();
       frames = 0;
     }
+
+    PRINT_GL_ERROR(true);
+    //    clear_gl_error();
   }
 
   terrain_free(terrain);

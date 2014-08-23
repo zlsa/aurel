@@ -212,6 +212,11 @@ bool shader_compile(struct shader_b *shader) {
     return(false);
   }
 
+  shader_use(shader);
+  shader_uniform_new(shader, "u_Time");
+  shader_uniform_new(shader, "u_ModelView");
+  shader_uniform_new(shader, "u_Projection");
+
   return(success);
 }
 
@@ -220,6 +225,31 @@ bool shader_compile(struct shader_b *shader) {
 bool shader_use(struct shader_b *shader) {
   ASSERT(shader);
   glUseProgram(shader->program);
+  return(true);
+}
+
+// call before each frame
+
+bool shader_draw(struct shader_b *shader) {
+  if(!shader_use(shader)) return(false);
+
+  GLfloat matrix[16] = {0};
+
+  shader_uniform_set_float(shader, "u_Time", glfwGetTime());
+
+  glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
+
+  shader_uniform_set_m4(shader, "u_ModelView", matrix);
+  
+#if 0
+  int i=0;
+  for(i=0;i<15;i++) printf("%d ", matrix[i]);
+  printf("\n");
+#endif
+
+  glGetFloatv(GL_PROJECTION_MATRIX, matrix);
+  shader_uniform_set_m4(shader, "u_Projection", matrix);
+
   return(true);
 }
 
@@ -258,21 +288,28 @@ int shader_uniform_get(struct shader_b *shader, char *name) {
   ASSERT(shader);
   int i;
   if(!shader->uniforms) {
+    log_warn("no uniforms set on shader");
     return(-1);
   }
   for(i=0;i<shader->uniform_used;i++) {
-    if(strcmp(shader->uniform_names[i], name) == 0) return(i);
+    if(strcmp(shader->uniform_names[i], name) == 0) return(shader->uniforms[i]);
   }
+  log_warn("no uniform variable '%s'", name);
   return(-1);
 }
 
 bool shader_uniform_set_float(struct shader_b *shader, char *name, float value) {
   ASSERT(shader);
   int uniform = shader_uniform_get(shader, name);
-  if(uniform == -1) {
-    log_warn("no uniform '%s' found", name);
-    return(false);
-  }
+  if(uniform == -1) return(false);
   glUniform1f(uniform, value);
+  return(true);
+}
+
+bool shader_uniform_set_m4(struct shader_b *shader, char *name, float *value) {
+  ASSERT(shader);
+  int uniform = shader_uniform_get(shader, name);
+  if(uniform == -1) return(false);
+  glUniformMatrix4fv(uniform, 1, GL_FALSE, value);
   return(true);
 }

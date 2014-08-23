@@ -9,7 +9,7 @@
 
 /* DEFINES */
 // vertices, normals
-#define OBJECT_ARRAY_NUMBER 2
+#define OBJECT_ARRAY_NUMBER 1
 
 /* BLOCKS */
 struct object_b {
@@ -17,7 +17,7 @@ struct object_b {
 
   struct shader_b *shader;
 
-  GLint **vertex_arrays;
+  GLuint vertex_position_array;
 
   GLuint vertex_buffer;
   GLuint normal_buffer;

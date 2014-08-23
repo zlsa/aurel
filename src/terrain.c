@@ -37,10 +37,6 @@ struct terrain_b *terrain_new(void) {
 
   shader_compile(shader);
 
-  shader_use(shader);
-
-  shader_uniform_new(shader, "u_Time");
-
   object_set_shader(terrain->object, shader);
   
   return(terrain_reference(terrain));
@@ -73,19 +69,19 @@ bool terrain_generate_object(struct terrain_b *terrain) {
 
   terrain->object->vertices = 4;
 
-  glBindVertexArray(terrain->object->vertex_arrays);
+  glBindVertexArray(terrain->object->vertex_position_array);
 
   glBindBuffer(GL_ARRAY_BUFFER, terrain->object->vertex_buffer);
   
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
+  PRINT_GL_ERROR(true);
   return(true);
 }
 
 bool terrain_draw(struct terrain_b *terrain) {
 
   shader_use(terrain->object->shader);
-  shader_uniform_set_float(terrain->object->shader, "u_Time", glfwGetTime());
 
   object_draw(terrain->object);
 
