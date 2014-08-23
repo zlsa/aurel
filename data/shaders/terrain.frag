@@ -75,33 +75,33 @@ float snoise(vec2 v)
   return 130.0 * dot(m, g);
 }
 
+float pnoise(vec2 v) {
+  return(-((abs(snoise(v)) - 0.5) * 2.0));
+}
+
 float trange(float il, float i, float ih, float ol, float oh) {
   return(ol+(oh-ol)*(i-il)/(ih-il));
 }
 
 void main() {
 
-  float t = u_Time * 0.05;
+  float t = u_Time * 0.2;
   float factor = 1.0;
   vec2 vp = vec2(v_Position.xy);
-  float noise = trange(-1.0, snoise(vp), 1.0, 0.0, factor);
+  float noise = trange(-1.0, pnoise(vp), 1.0, 0.0, factor);
   factor *= 0.5;
   vp.x += t * 0.5;
   vp.y += t * 0.25;
-  noise += trange(-1.0, snoise(vp * 5  + 200), 1.0, 0.0, factor);
+  noise += trange(-1.0, pnoise(vp * 2 + 200), 1.0, 0.0, factor);
   factor *= 0.5;
   vp.x -= t;
   vp.y += t * 0.5;
-  noise += trange(-1.0, snoise(vp * 10 + 800), 1.0, 0.0, factor);
+  noise += trange(-1.0, pnoise(vp * 4 + 400), 1.0, 0.0, factor);
   factor *= 0.5;
-  vp.x += t * 0.2;
-  vp.y -= t * 0.5;
-  noise += trange(-1.0, snoise(vp * 20 + 100), 1.0, 0.0, factor);
-  factor *= 0.5;
-  vp.x += t * 0.2;
-  vp.y -= t * 0.5;
-  noise += trange(-1.0, snoise(vp * 40 + 1000), 1.0, 0.0, factor);
+  vp.x += t * 0.5;
+  vp.y -= t * 0.25;
+  noise += trange(-1.0, pnoise(vp * 8 + 800), 1.0, 0.0, factor);
 
-  noise = trange(0.0, noise, 2.0, 0.0, 1.0);
-  gl_FragColor = vec4(0.2, 0.4, 0.5, 1.0) * noise;
+  //  noise /= 2.0;
+  gl_FragColor = vec4(1.0, 0.4, 0.2, 1.0) * noise;
 }

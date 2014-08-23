@@ -57,7 +57,7 @@ bool object_draw(struct object_b *object) {
 
   glEnableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, object->vertex_buffer);
-  glVertexAttribPointer(0, object->vertices, GL_FLOAT, GL_FALSE, 0, (void*) 0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
 
   glDrawArrays(GL_QUADS, 0, object->vertices);
 
