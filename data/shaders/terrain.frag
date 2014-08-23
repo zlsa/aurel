@@ -1,6 +1,6 @@
 #version 330
 
-varying vec4 v_Position;
+in vec4 v_Position;
 
 uniform float u_Time;
 
@@ -87,23 +87,14 @@ float trange(float il, float i, float ih, float ol, float oh) {
 void main() {
 
   float t = u_Time * 0.5;
-  float factor = 1.0;
-  vec2 vp = vec2(v_Position.xy);
-  vp.x += v_Position.z;
-  vp.y -= v_Position.z;
-  float noise = trange(-1.0, pnoise(vp), 1.0, 0.0, factor);
-  factor *= 0.5;
+  vec2 vp = vec2(v_Position.xz) * 0.5;
+  float noise = pnoise(vp) * 0.5 + 0.5;
   vp.x += t * 0.5;
   vp.y += t * 0.25;
-  noise += trange(-1.0, pnoise(vp * 2 + 200), 1.0, 0.0, factor);
-  factor *= 0.5;
+  noise += pnoise(vp * 2 + 200) * 0.5 + 0.5 * 0.5;
   vp.x -= t;
   vp.y += t * 0.5;
-  noise += trange(-1.0, pnoise(vp * 4 + 400), 1.0, 0.0, factor);
-  factor *= 0.5;
-  vp.x += t * 0.5;
-  vp.y -= t * 0.25;
-  noise += trange(-1.0, pnoise(vp * 8 + 800), 1.0, 0.0, factor);
+  noise += pnoise(vp * 4 + 400) * 0.5 + 0.5 * 0.25;
 
   //  noise /= 2.0;
   gl_FragColor = vec4(1.0, 0.4, 0.2, 1.0) * noise;

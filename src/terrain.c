@@ -60,47 +60,53 @@ bool terrain_free(struct terrain_b *terrain) {
 }
 
 bool terrain_generate_object(struct terrain_b *terrain) {
-  static const GLfloat g_vertex_buffer_data[] = {
-    -1.0,  1.0,  1.0,
-     1.0,  1.0,  1.0,
-     1.0, -1.0,  1.0,
-    -1.0, -1.0,  1.0,
+  float size = 50;
+  float resolution = 0.1;
+  int number = size / resolution;
+  int quad_number = (number+1) * (number+1);
+  int vertex_number = quad_number * 4;
+  
+  float *vertices = MALLOC(sizeof(float) * vertex_number * 3);
 
-     1.0, -1.0,  1.0,
-     1.0,  1.0,  1.0,
-     1.0,  1.0, -1.0,
-     1.0, -1.0, -1.0,
+  int x = 0;
+  int y = 0;
+  int i = 0;
 
-    -1.0,  1.0, -1.0,
-     1.0,  1.0, -1.0,
-     1.0, -1.0, -1.0,
-    -1.0, -1.0, -1.0,
+  for(i=0;i<quad_number;i++) {
 
-    -1.0, -1.0,  1.0,
-    -1.0,  1.0,  1.0,
-    -1.0,  1.0, -1.0,
-    -1.0, -1.0, -1.0,
+    vertices[i*12+0]  = (x + 0) * resolution - (size * 0.5);
+    vertices[i*12+1]  = 0;
+    vertices[i*12+2]  = (y + 0) * resolution - (size * 0.5);
 
-    -1.0,  1.0, -1.0,
-     1.0,  1.0, -1.0,
-     1.0,  1.0,  1.0,
-    -1.0,  1.0,  1.0,
+    vertices[i*12+3]  = (x + 0) * resolution - (size * 0.5);
+    vertices[i*12+4]  = 0;
+    vertices[i*12+5]  = (y + 1) * resolution - (size * 0.5);
 
-    -1.0, -1.0, -1.0,
-     1.0, -1.0, -1.0,
-     1.0, -1.0,  1.0,
-    -1.0, -1.0,  1.0,
-  };
+    vertices[i*12+6]  = (x + 1) * resolution - (size * 0.5);
+    vertices[i*12+7]  = 0;
+    vertices[i*12+8]  = (y + 1) * resolution - (size * 0.5);
 
-  terrain->object->vertices = 24;
+    vertices[i*12+9]  = (x + 1) * resolution - (size * 0.5);
+    vertices[i*12+10] = 0;
+    vertices[i*12+11] = (y + 0) * resolution - (size * 0.5);
+
+    x++;
+    if(x > number) {
+      x=0;
+      y++;
+    }
+  }
+
+  terrain->object->vertices = vertex_number;
 
   glBindVertexArray(terrain->object->vertex_position_array);
 
   glBindBuffer(GL_ARRAY_BUFFER, terrain->object->vertex_buffer);
-  
-  glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+  glBufferData(GL_ARRAY_BUFFER, vertex_number * sizeof(float) * 3, vertices, GL_STATIC_DRAW);
 
   PRINT_GL_ERROR(true);
+  FREE(vertices);
   return(true);
 }
 

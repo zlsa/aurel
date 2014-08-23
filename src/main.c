@@ -115,9 +115,9 @@ int main(int argc,char **argv) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    float fov    = DEG_TO_RAD((sin(glfwGetTime() * 1) + 20) * 3) * 0.5;
+    float fov    = DEG_TO_RAD(40);
     float near   = 0.2;
-    float far    = 10.0;
+    float far    = 100.0;
 
     float left   = near * tan(fov) * 0.5 * ratio;
     float right  = -left;
@@ -130,14 +130,14 @@ int main(int argc,char **argv) {
     glLoadIdentity();
 
     glTranslatef(0.0, 0.0, -7.0);
-    glRotatef((float) glfwGetTime() * 20.0, 1.0f, 0.0f, 1.0f);
-    glRotatef((float) glfwGetTime() * 10.0, 1.0f, 1.0f, 0.0f);
+
+    glRotatef(15, 1.0f, 0.0f, 0.0f);
+    glRotatef((float) glfwGetTime() * 10.0, 0.0f, 1.0f, 0.0f);
 
     terrain_draw(terrain);
     
 #if 0
     glBegin(GL_TRIANGLES);
-    glColor3f(   1.0f,  1.0f, 1.0f);
     glVertex3f( -0.6f, -0.4f, 0.0f);
     glVertex3f(  0.6f, -0.4f, 0.0f);
     glVertex3f(  0.0f,  0.6f, 0.0f);
