@@ -294,7 +294,7 @@ int shader_uniform_get(struct shader_b *shader, char *name) {
   for(i=0;i<shader->uniform_used;i++) {
     if(strcmp(shader->uniform_names[i], name) == 0) return(shader->uniforms[i]);
   }
-  log_warn("no uniform variable '%s'", name);
+  //  log_warn("no uniform variable '%s'", name);
   return(-1);
 }
 

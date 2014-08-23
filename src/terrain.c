@@ -61,13 +61,38 @@ bool terrain_free(struct terrain_b *terrain) {
 
 bool terrain_generate_object(struct terrain_b *terrain) {
   static const GLfloat g_vertex_buffer_data[] = {
-    -1.0f,  1.0f, 0.0f,
-     1.0f,  1.0f, 0.0f,
-     1.0f, -1.0f, 0.0f,
-    -1.0f, -1.0f, 0.0f
+    -1.0,  1.0,  1.0,
+     1.0,  1.0,  1.0,
+     1.0, -1.0,  1.0,
+    -1.0, -1.0,  1.0,
+
+     1.0, -1.0,  1.0,
+     1.0,  1.0,  1.0,
+     1.0,  1.0, -1.0,
+     1.0, -1.0, -1.0,
+
+    -1.0,  1.0, -1.0,
+     1.0,  1.0, -1.0,
+     1.0, -1.0, -1.0,
+    -1.0, -1.0, -1.0,
+
+    -1.0, -1.0,  1.0,
+    -1.0,  1.0,  1.0,
+    -1.0,  1.0, -1.0,
+    -1.0, -1.0, -1.0,
+
+    -1.0,  1.0, -1.0,
+     1.0,  1.0, -1.0,
+     1.0,  1.0,  1.0,
+    -1.0,  1.0,  1.0,
+
+    -1.0, -1.0, -1.0,
+     1.0, -1.0, -1.0,
+     1.0, -1.0,  1.0,
+    -1.0, -1.0,  1.0,
   };
 
-  terrain->object->vertices = 4;
+  terrain->object->vertices = 24;
 
   glBindVertexArray(terrain->object->vertex_position_array);
 

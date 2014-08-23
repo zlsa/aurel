@@ -98,6 +98,9 @@ int main(int argc,char **argv) {
   float last_time = glfwGetTime();
   int frames = 0;
 
+  glDepthFunc(GL_LESS);
+  glEnable(GL_DEPTH_TEST);
+
   /* MAIN LOOP */
   while(!glfwWindowShouldClose(program->window->window)) {
     int width, height;
@@ -105,14 +108,14 @@ int main(int argc,char **argv) {
 
     float ratio = ((float) width) / ((float) height);
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glViewport(0, 0, width, height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    float fov    = DEG_TO_RAD((sin(glfwGetTime() * 3) + 2) * 25) * 0.5;
+    float fov    = DEG_TO_RAD((sin(glfwGetTime() * 1) + 20) * 3) * 0.5;
     float near   = 0.2;
     float far    = 10.0;
 
@@ -127,8 +130,8 @@ int main(int argc,char **argv) {
     glLoadIdentity();
 
     glTranslatef(0.0, 0.0, -7.0);
-    glRotatef((float) glfwGetTime() * 100.0, 1.0f, 0.0f, 1.0f);
-    glRotatef((float) glfwGetTime() * 50.0, 1.0f, 1.0f, 0.0f);
+    glRotatef((float) glfwGetTime() * 20.0, 1.0f, 0.0f, 1.0f);
+    glRotatef((float) glfwGetTime() * 10.0, 1.0f, 1.0f, 0.0f);
 
     terrain_draw(terrain);
     

@@ -76,6 +76,7 @@ float snoise(vec2 v)
 }
 
 float pnoise(vec2 v) {
+  /*  return(snoise(v));*/
   return(-((abs(snoise(v)) - 0.5) * 2.0));
 }
 
@@ -88,6 +89,8 @@ void main() {
   float t = u_Time * 0.5;
   float factor = 1.0;
   vec2 vp = vec2(v_Position.xy);
+  vp.x += v_Position.z;
+  vp.y -= v_Position.z;
   float noise = trange(-1.0, pnoise(vp), 1.0, 0.0, factor);
   factor *= 0.5;
   vp.x += t * 0.5;
@@ -104,4 +107,5 @@ void main() {
 
   //  noise /= 2.0;
   gl_FragColor = vec4(1.0, 0.4, 0.2, 1.0) * noise;
+
 }
