@@ -19,6 +19,10 @@ struct object_b *object_new(void) {
 
   object->vertices = 0;
 
+  object->textures = NULL;
+  object->allocated = 0;
+  object->used = 0;
+
   return(object_reference(object));
 }
 

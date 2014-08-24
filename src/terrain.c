@@ -60,11 +60,13 @@ bool terrain_free(struct terrain_b *terrain) {
 }
 
 bool terrain_generate_object(struct terrain_b *terrain) {
-  float size = 50;
-  float resolution = 0.1;
-  int number = size / resolution;
+  float size = 100;
+  float resolution = 1.0;
+  int number = floor(size / resolution);
   int quad_number = (number+1) * (number+1);
   int vertex_number = quad_number * 4;
+
+  log_info("terrain vertices: %d", vertex_number);
   
   float *vertices = MALLOC(sizeof(float) * vertex_number * 3);
 

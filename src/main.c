@@ -131,7 +131,7 @@ int main(int argc,char **argv) {
 
     glTranslatef(0.0, 0.0, -7.0);
 
-    glRotatef(15, 1.0f, 0.0f, 0.0f);
+    glRotatef((sin(glfwGetTime() * 0.5) + 1.2) * 30, 1.0f, 0.0f, 0.0f);
     glRotatef((float) glfwGetTime() * 10.0, 0.0f, 1.0f, 0.0f);
 
     terrain_draw(terrain);

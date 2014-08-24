@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
 #include "shader.h"
+#include "texture.h"
 
 /* DEFINES */
 // vertices, normals
@@ -16,6 +17,10 @@ struct object_b {
   int references;
 
   struct shader_b *shader;
+
+  struct texture_b *textures;
+  int texture_allocated;
+  int texture_used;
 
   GLuint vertex_position_array;
 

@@ -96,12 +96,9 @@ void main() {
   vp.x += t * 0.5;
   vp.y += t * 0.25;
   noise += pnoise(vp * 2 + 200) * 0.5 + 0.5 * 0.5;
-  vp.x -= t;
-  vp.y += t * 0.5;
-  noise += pnoise(vp * 4 + 400) * 0.5 + 0.5 * 0.25;
 
   vec4 position = a_Position;
-  position.y = noise * 0.05;
+  position.y = noise * 0.5;
   gl_Position = (u_Projection * u_ModelView * position);
   v_Position = a_Position;
 }
